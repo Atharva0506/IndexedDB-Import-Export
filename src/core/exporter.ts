@@ -109,7 +109,7 @@ export async function exportDB(options: ExportOptions): Promise<ExportFormat> {
     // Determine which stores to export
     const allStoreNames = Array.from(db.objectStoreNames);
     const targetStores = storeNames
-      ? storeNames.filter((name) => allStoreNames.includes(name))
+      ? [...new Set(storeNames.filter((name) => allStoreNames.includes(name)))]
       : allStoreNames;
 
     if (targetStores.length === 0) {

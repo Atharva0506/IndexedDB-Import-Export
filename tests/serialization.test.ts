@@ -47,6 +47,10 @@ describe('Date serialization', () => {
   it('throws on invalid Date input', () => {
     expect(() => serialize(new Date('not-a-date'))).toThrow(RangeError);
   });
+
+  it('throws on a malformed date value when deserializing a backup', () => {
+    expect(() => deserialize({ __type: 'date', value: 'not-a-date' })).toThrow(RangeError);
+  });
 });
 
 describe('nested round-trips', () => {

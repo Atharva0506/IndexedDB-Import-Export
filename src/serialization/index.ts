@@ -125,8 +125,13 @@ export function deserialize(value: unknown): unknown {
       case 'bigint':
         return BigInt(value.value);
 
-      case 'date':
-        return new Date(value.value);
+      case 'date': {
+        const date = new Date(value.value);
+        if (Number.isNaN(date.getTime())) {
+          throw new RangeError(`Invalid date value in backup: "${value.value}"`);
+        }
+        return date;
+      }
 
       default:
         // Unknown tag — return as-is (forward compatibility)

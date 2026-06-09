@@ -25,6 +25,18 @@ export interface StoreSchema {
 }
 
 /**
+ * Canonical `__type` tag names used by the serialization layer.
+ *
+ * Centralised here so encode/decode reference the same constants instead of
+ * scattered string literals (avoids typos and eases adding new tags).
+ */
+export const TAGS = {
+  UINT8: 'u8',
+  BIGINT: 'bigint',
+  DATE: 'date',
+} as const;
+
+/**
  * A type-tagged value used to preserve types that JSON.stringify cannot handle natively.
  *
  * Supported `__type` values:

@@ -1,3 +1,4 @@
+import { TAGS } from '../types/index.js';
 import type { TaggedValue } from '../types/index.js';
 
 /**
@@ -75,15 +76,15 @@ function isTaggedValue(value: unknown): value is TaggedValue {
 export function serialize(value: unknown): unknown {
   // Uint8Array → tagged base64
   if (value instanceof Uint8Array) {
-    return { __type: 'u8', value: uint8ArrayToBase64(value) } satisfies TaggedValue;
+    return { __type: TAGS.UINT8, value: uint8ArrayToBase64(value) } satisfies TaggedValue;
   }
 
   if (typeof value === 'bigint') {
-    return { __type: 'bigint', value: value.toString() } satisfies TaggedValue;
+    return { __type: TAGS.BIGINT, value: value.toString() } satisfies TaggedValue;
   }
 
   if (value instanceof Date) {
-    return { __type: 'date', value: value.toISOString() } satisfies TaggedValue;
+    return { __type: TAGS.DATE, value: value.toISOString() } satisfies TaggedValue;
   }
 
   // Recursively process arrays
@@ -119,13 +120,13 @@ export function deserialize(value: unknown): unknown {
   // Check for tagged values first
   if (isTaggedValue(value)) {
     switch (value.__type) {
-      case 'u8':
+      case TAGS.UINT8:
         return base64ToUint8Array(value.value);
 
-      case 'bigint':
+      case TAGS.BIGINT:
         return BigInt(value.value);
 
-      case 'date': {
+      case TAGS.DATE: {
         const date = new Date(value.value);
         if (Number.isNaN(date.getTime())) {
           throw new RangeError(`Invalid date value in backup: "${value.value}"`);
@@ -134,7 +135,11 @@ export function deserialize(value: unknown): unknown {
       }
 
       default:
-        // Unknown tag — return as-is (forward compatibility)
+        // Unknown tag — likely written by a newer serializer. Warn so the caller
+        // knows the value wasn't decoded, then return as-is (forward compatibility).
+        console.warn(
+          `[idb-backup] Unknown __type tag "${value.__type}" — returning the tagged value unchanged.`
+        );
         return value;
     }
   }

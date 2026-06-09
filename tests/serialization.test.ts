@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { serialize, deserialize } from '../src/serialization/index.js';
 
 describe('bigint serialization', () => {
@@ -93,5 +93,15 @@ describe('nested round-trips', () => {
     nullProto['n'] = { __type: 'bigint', value: '7' };
     const restored = deserialize(nullProto) as { n: bigint };
     expect(restored.n).toBe(7n);
+  });
+});
+
+describe('forward compatibility', () => {
+  it('returns an unknown tag unchanged and warns', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const unknown = { __type: 'future-type', value: 'x' };
+    expect(deserialize(unknown)).toEqual(unknown);
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
   });
 });

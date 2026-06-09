@@ -53,6 +53,12 @@ describe('Date serialization', () => {
   });
 });
 
+describe('bigint deserialization (corrupt input)', () => {
+  it('throws on a malformed bigint value when deserializing a backup', () => {
+    expect(() => deserialize({ __type: 'bigint', value: '7.2' })).toThrow(SyntaxError);
+  });
+});
+
 describe('nested round-trips', () => {
   it('round-trips bigint inside an object', () => {
     const data = { mint_fee: 100000n, name: 'pool' };
@@ -103,5 +109,10 @@ describe('forward compatibility', () => {
     expect(deserialize(unknown)).toEqual(unknown);
     expect(warn).toHaveBeenCalledOnce();
     warn.mockRestore();
+  });
+
+  it('treats a tagged-like object missing its value field as a plain object', () => {
+    const taggedLike: Record<string, unknown> = { __type: 'bigint' };
+    expect(deserialize(taggedLike)).toEqual(taggedLike);
   });
 });

@@ -14,3 +14,7 @@ export type {
   IndexSchema,
   TaggedValue,
 } from './types/index.js';
+
+// Browser utilities
+export { isBrowser, assertBrowser } from './utils/ssr.js';
+export { downloadJSON, readFileAsJSON } from './utils/file.js';

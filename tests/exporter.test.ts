@@ -263,7 +263,7 @@ describe('exportDB', () => {
     const after = new Date();
 
     // Validate ISO 8601 format
-    const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+    const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
     expect(result.exportedAt).toMatch(iso8601Regex);
 
     // Verify it's a reasonable timestamp (between before and after)

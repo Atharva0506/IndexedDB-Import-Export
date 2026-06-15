@@ -185,10 +185,12 @@ describe('exportDB → importDB round-trip', () => {
     const overwriteRecords = await readAllFromStore(overwriteDB, 'items');
     const mergeRecords = await readAllFromStore(mergeDB, 'items');
 
-    // Same data in both
-    expect(mergeRecords).toHaveLength(overwriteRecords.length);
-    expect(mergeRecords.map((r) => r.value)).toEqual(
-      expect.arrayContaining(overwriteRecords.map((r) => r.value)),
-    );
+    // Same data in both (key + value), order-independent
+    const normalize = (records: Array<{ key: unknown; value: unknown }>) =>
+      [...records]
+        .map((r) => ({ key: r.key, value: r.value }))
+        .sort((a, b) => JSON.stringify(a.key).localeCompare(JSON.stringify(b.key)));
+
+    expect(normalize(mergeRecords)).toEqual(normalize(overwriteRecords));
   });
 });

@@ -179,6 +179,7 @@ export function setupFakeIDB(): void {
         const req = indexedDB.deleteDatabase(name);
         req.onsuccess = () => resolve();
         req.onerror = () => resolve(); // Best-effort cleanup.
+        req.onblocked = () => resolve(); // Avoid hanging cleanup.
       });
     }
     createdDatabases.length = 0;

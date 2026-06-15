@@ -1,6 +1,6 @@
 {
   "name": "aossie-idb-backup",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A framework-agnostic, lightweight TypeScript library for exporting and importing IndexedDB databases via type-tagged JSON.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -41,7 +41,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AOSSIE-Org/IndexedDB-Import-Export.git"
+    "url": "git+https://github.com/AOSSIE-Org/IndexedDB-Import-Export.git"
   },
   "bugs": {
     "url": "https://github.com/AOSSIE-Org/IndexedDB-Import-Export/issues"

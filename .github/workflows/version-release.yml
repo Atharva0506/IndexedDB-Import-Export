@@ -26,20 +26,21 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify push is from org member
+      - name: Verify actor is a maintainer
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: membership } = await github.rest.orgs.getMembershipForUser({
-              org: 'AOSSIE-Org',
+            const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               username: context.actor,
-            }).catch(() => ({ data: { state: 'not_found' } }));
-
-            if (membership.state !== 'active') {
-              core.setFailed(`Actor '${context.actor}' is not an active member of AOSSIE-Org. Aborting release.`);
+            }).catch(() => ({ data: { permission: 'none' } }));
+            
+            if (permission.permission !== 'admin' && permission.permission !== 'write') {
+              core.setFailed(`Actor '${context.actor}' does not have write access to this repository. Aborting release.`);
             } else {
-              console.log(`✓ Actor '${context.actor}' is a verified AOSSIE-Org member.`);
+              console.log(`✓ Actor '${context.actor}' is a verified repository maintainer.`);
             }
 
       - name: Read VERSION file
